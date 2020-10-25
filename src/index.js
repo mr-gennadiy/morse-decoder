@@ -37,10 +37,47 @@ const MORSE_TABLE = {
     '-----':  '0',
 };
 
+const MORSE_TABLE_ENCODED = newKeys (MORSE_TABLE);
+
+function newKeys (obj) {
+    const ZERO_STRING = '0000000000';
+    let newKeyObj = {};
+    for (let k in obj) {
+        let kStr = '';
+        let kArr = [];
+        let lengthDifference;
+        k.split('').forEach ((elem, ind) => {
+            if (elem == '.') {
+                kArr[ind] = '10';
+            } else kArr[ind] = '11';
+        });
+        kStr = kArr.join('');
+        lengthDifference = 10 - kStr.length;
+        if (lengthDifference > 0) {
+            kStr = ZERO_STRING.substr(0, lengthDifference) + kStr;
+        };
+        newKeyObj[kStr] = obj[k];
+    };
+    return newKeyObj;
+};
+
 function decode(expr) {
-    // write your solution here
-}
+    let result = '';
+    let wordArr = expr.split('**********');
+    wordArr.forEach(word => {
+        let charArr = [];
+        let decWord = '';
+        for (let i = 0;  i <= word.length; i += 10) {
+            charArr.push (word.substr(i, 10));
+        };
+        charArr.forEach(char => {
+            decWord += MORSE_TABLE_ENCODED[char];
+        });
+        result += decWord.slice(0, -9) + ' ';
+    });
+    return result.trim();
+};
 
 module.exports = {
     decode
-}
+};
